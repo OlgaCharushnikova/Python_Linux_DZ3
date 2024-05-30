@@ -1,5 +1,5 @@
 import pytest
-from checkers import checkout
+from checkers import checkout, getout
 import random, string
 import yaml
 from datetime import datetime
@@ -40,3 +40,10 @@ def print_time():
     print("Start: {}".format(datetime.now().strftime("%H:%M:%S.%f")))
     yield
     print("Finish: {}".format(datetime.now().strftime("%H:%M:%S.%f")))
+
+@pytest.fixture(autouse=True)
+def stat_log():
+    yield
+    time = datetime.now().strftime("%H:%M:%s.%f")
+    stat = getout('cat /proc/loadavg')
+    checkout(f"echo 'time:{time} count:{data['count']} size;{data['bs']} stat:{stat}' >> stat.txt", '')
